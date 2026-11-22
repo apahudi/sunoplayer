@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Suno Player</title>
+  <meta name="theme-color" content="#08070a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #08070a;
+      --surface: rgba(255, 255, 255, 0.045);
+      --surface-2: rgba(255, 255, 255, 0.07);
+      --line: rgba(255, 255, 255, 0.09);
+      --line-strong: rgba(255, 255, 255, 0.16);
+      --text: #f6f2ec;
+      --muted: rgba(246, 242, 236, 0.56);
+      --faint: rgba(246, 242, 236, 0.34);
+      --accent: #ff6a3d;
+      --accent-2: #ff2e73;
+      --accent-3: #ffb347;
+      --grad: linear-gradient(120deg, #ffb347, #ff6a3d 45%, #ff2e73);
+      --font-ui: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-display: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", serif;
+      --danger: #ff6b6b;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { color-scheme: dark; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--font-ui);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(900px 600px at 12% -10%, rgba(255, 106, 61, 0.16), transparent 60%),
+        radial-gradient(800px 600px at 95% 4%, rgba(255, 46, 115, 0.13), transparent 55%),
+        radial-gradient(1000px 700px at 50% 120%, rgba(120, 80, 255, 0.10), transparent 60%);
+      background-attachment: fixed;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; cursor: pointer; }
+    button, input, select, textarea { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; cursor: pointer; }
+    button:disabled { cursor: not-allowed; }
+    a:focus-visible, button:focus-visible { outline: 2px solid rgba(255, 106, 61, 0.8); outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    ::selection { background: rgba(255, 106, 61, 0.35); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border: 3px solid transparent; background-clip: content-box; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.24); }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 80px; }
+
+    header.admin-top {
+      position: sticky; top: 0; z-index: 50;
+      padding: 14px 20px 10px;
+      background: linear-gradient(180deg, rgba(8, 7, 10, 0.94), rgba(8, 7, 10, 0.66) 62%, transparent);
+      -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    .top-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; gap: 12px; padding: 0 20px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+    .brand-mark { width: 32px; height: 32px; border-radius: 11px; background: var(--grad); display: grid; place-items: center; color: #160a05; box-shadow: 0 6px 18px -6px rgba(255, 90, 60, 0.65); }
+    .brand-mark .icon { width: 18px; height: 18px; stroke-width: 2; }
+    .brand-name span { color: var(--muted); font-weight: 500; }
+    .brand-name > span + span { margin-left: 4px; }
+    .admin-tag { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.14em; border: 1px solid var(--line); padding: 3px 8px; border-radius: 999px; }
+    .admin-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .notification-button { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, 0.05); color: var(--text); }
+    .notification-button:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--line-strong); }
+    .notification-button:active { transform: scale(0.97); }
+    .notification-badge { position: absolute; top: -5px; right: -5px; min-width: 19px; height: 19px; padding: 0 5px; border: 2px solid var(--bg); border-radius: 10px; background: var(--accent); color: #1b0a05; font-size: 10px; font-weight: 700; line-height: 15px; text-align: center; }
+    .notification-dialog { width: min(620px, calc(100vw - 24px)); max-height: min(82vh, 760px); margin: auto; padding: 20px; overflow-y: auto; border: 1px solid var(--line-strong); border-radius: 16px; background: #111014; color: var(--text); }
+    .notification-dialog::backdrop { background: rgba(0, 0, 0, 0.74); }
+    .notification-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .notification-dialog-head h2 { margin: 0; font-family: var(--font-display); font-size: 23px; font-weight: 400; }
+    .notification-dialog .section-title { margin: 16px 0 10px; }
+    .notification-dialog .panel { margin-top: 0; padding: 12px; }
+    .notification-dialog .activity-list { max-height: 60vh; overflow-y: auto; }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+      padding: 24px;
+      margin-top: 24px;
+      box-shadow: 0 30px 80px -50px rgba(0, 0, 0, 0.9);
+    }
+    .panel h2 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 400; font-size: 20px; letter-spacing: -0.02em; }
+    .panel p.sub { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+
+    .login {
+      min-height: calc(100vh - 40px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-card { width: min(420px, 92vw); padding: 32px 28px; }
+    .login .panel { padding: 28px; margin-top: 0; }
+
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+    .field input { width: 100%; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.25); color: var(--text); padding: 0 14px; font-size: 14px; outline: none; }
+    .field input:focus { border-color: rgba(255, 106, 61, 0.5); box-shadow: 0 0 0 3px rgba(255, 106, 61, 0.08); }
+    .field input.error { border-color: var(--danger); }
+
+    .password-input { position: relative; display: flex; align-items: center; }
+    .password-input input { padding-right: 44px; }
+    .password-input .btn-icon { position: absolute; right: 8px; z-index: 2; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; transition: transform 0.18s, background 0.2s, border-color 0.2s; }
+    .btn-primary { background: var(--grad); color: #1b0a05; box-shadow: 0 12px 30px -12px rgba(255, 90, 60, 0.65); }
+    .btn-primary:hover { filter: brightness(1.07); transform: translateY(-1px); }
+    .btn-glass { background: rgba(255, 255, 255, 0.05); border-color: var(--line); color: var(--text); }
+    .btn-glass:hover { background: rgba(255, 255, 255, 0.09); border-color: var(--line-strong); }
+    .btn-danger { background: rgba(255, 90, 90, 0.12); border-color: rgba(255, 90, 90, 0.3); color: var(--danger); }
+    .btn-danger:hover { background: rgba(255, 90, 90, 0.22); }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.58; }
+    .btn-sm { height: 32px; padding: 0 12px; font-size: 12px; }
+    .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 50%; background: transparent; border: 1px solid var(--line); color: var(--muted); display: grid; place-items: center; }
+    .btn-icon:hover { color: var(--text); background: rgba(255, 255, 255, 0.07); }
+
+    .row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 640px) { .row { grid-template-columns: 1fr 1fr; } }
+
+    .toast { position: fixed; left: 50%; bottom: 24px; z-index: 120; display: flex; align-items: center; gap: 8px; max-width: min(92vw, 520px); padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(20, 17, 24, 0.96); color: var(--text); font-size: 12px; opacity: 0; transform: translate(-50%, 14px); pointer-events: none; transition: opacity 0.25s, transform 0.25s; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .toast[data-type="error"] { border-color: rgba(255, 90, 90, 0.35); }
+
+    table.playlist-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    table.playlist-table th { text-align: left; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+    table.playlist-table td { padding: 10px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); vertical-align: middle; }
+    table.playlist-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
+    .track-actions { display: flex; gap: 6px; }
+
+    .back { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+    .back:hover { color: var(--text); }
+    .muted-note { font-size: 11.5px; color: var(--faint); margin-top: 6px; }
+    .error-msg { color: var(--danger); font-size: 12px; margin-top: 6px; min-height: 16px; }
+    .hidden { display: none !important; }
+
+    .section-title { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 12px; }
+    .section-title h3 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+
+    .empty { text-align: center; color: var(--faint); padding: 30px 14px; font-size: 13px; }
+    .empty strong { display: block; margin-bottom: 5px; color: var(--muted); }
+    .activity-list { display: grid; gap: 10px; }
+    .activity-item, .admin-comment { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(0, 0, 0, 0.18); }
+    .activity-title, .admin-comment-title { margin: 0; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+    .activity-meta, .admin-comment-meta { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .activity-summary, .admin-comment-text { margin: 8px 0 0; color: var(--text); font-size: 13px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .activity-item[data-unread="true"] { border-color: rgba(255, 106, 61, 0.3); }
+    .notification-count { margin-left: 7px; color: var(--accent-3); font-size: 11px; font-variant-numeric: tabular-nums; }
+    .admin-comment-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .admin-comment-replies { display: grid; gap: 8px; margin: 12px 0 0; padding-left: 12px; border-left: 1px solid var(--line-strong); }
+    .admin-comment-reply { min-width: 0; }
+    .admin-comment-reply p { margin: 4px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .reply-form { display: grid; gap: 8px; margin-top: 12px; }
+    .reply-form label { color: var(--muted); font-size: 11px; font-weight: 600; }
+    .reply-form textarea { width: 100%; min-height: 76px; resize: vertical; border: 1px solid var(--line); border-radius: 9px; background: rgba(0, 0, 0, .25); color: var(--text); padding: 10px; }
+    .reply-form textarea:focus { outline: 2px solid rgba(255, 106, 61, .45); outline-offset: 1px; }
+    .reply-form .btn { justify-self: start; }
+    .reply-status { margin: 0; color: var(--muted); font-size: 11px; }
+    .reply-status[data-type="error"] { color: var(--danger); }
+    .pin-change-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .pin-change-form { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+    .pin-change-form h4 { margin: 0 0 12px; font-size: 13px; font-weight: 600; }
+    .pin-change-form .field { margin-bottom: 10px; }
+    .pin-change-form .btn { margin-top: 4px; }
+    .pin-status { min-height: 18px; margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+    .pin-status[data-type="error"] { color: var(--danger); }
+    .admin-comment-delete { margin-left: auto; }
+    .offline-cache-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, 0.45fr); align-items: end; gap: 18px; }
+    .offline-toggle { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; cursor: pointer; }
+    .offline-toggle input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--accent); }
+    .offline-toggle input:focus-visible { outline: 2px solid var(--accent-3); outline-offset: 3px; }
+    .offline-toggle strong { display: block; color: var(--text); font-size: 13px; font-weight: 600; }
+    .offline-toggle span { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .offline-cache-status { min-height: 20px; margin: 14px 0 0; color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 520px) {
+      header.admin-top { padding-right: 10px; padding-left: 10px; }
+      .top-inner { gap: 8px; padding: 0; }
+      .brand { gap: 7px; font-size: 12px; }
+      .brand-mark { width: 30px; height: 30px; }
+      .admin-tag { display: none; }
+      .admin-actions { gap: 6px; }
+      .admin-actions .btn { height: 36px; padding: 0 10px; font-size: 11px; }
+      .notification-button { width: 40px; height: 40px; }
+      .pin-change-grid { grid-template-columns: 1fr; }
+      .offline-cache-controls { grid-template-columns: 1fr; gap: 4px; }
+      .notification-dialog { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="admin-top">
+    <div class="top-inner">
+      <a class="brand" href="/nugaduhna" aria-label="Admin beranda">
+        <span class="brand-mark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6M4.93 4.93l1.42 1.42M19.07 19.07l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M19.07 4.93l1.42-1.42"></path></svg></span>
+        <span class="brand-name"><span id="adminBrandName">Suno</span><span>Admin</span></span>
+        <span class="admin-tag">Admin</span>
+      </a>
+      <nav class="admin-actions" id="adminActions" aria-label="Navigasi admin" hidden>
+        <a class="btn btn-sm btn-glass" id="commentsLink" href="/nugaduhna/comments">Komentar</a>
+        <a class="btn btn-sm btn-glass" id="dashboardLink" href="/nugaduhna" hidden>Pengaturan</a>
+        <button class="notification-button" id="notificationButton" type="button" aria-label="Notifikasi" aria-haspopup="dialog" aria-expanded="false">
+          <svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+          <span class="notification-badge" id="notificationCount" aria-live="polite" hidden></span>
+        </button>
+        <button class="btn btn-sm btn-glass" id="logoutBtn" type="button">Keluar</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <!-- Login -->
+    <section class="login" id="loginView">
+      <div class="login-card">
+        <div class="panel">
+          <h2>Masuk Admin</h2>
+          <p class="sub">Masukkan PIN untuk mengelola playlist dan pengaturan aplikasi.</p>
+          <div class="field">
+            <label for="pinInput">PIN admin</label>
+            <div class="password-input">
+              <input id="pinInput" type="password" placeholder="••••••" maxlength="10" autocomplete="off">
+              <button type="button" id="togglePin" class="btn-icon" title="Tampilkan/sembunyikan PIN" aria-label="Tampilkan/sembunyikan PIN">
+                <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+            <div class="error-msg" id="loginError"></div>
+          </div>
+          <button class="btn btn-primary" id="loginBtn" type="button">Masuk</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboardView" hidden>
+      <div id="homeAdminView">
+      <div class="back" id="backToLogin" role="button" tabindex="0" hidden>← Tutup daftar lagu</div>
+
+      <div class="section-title">
+        <h3>Pengaturan aplikasi</h3>
+        <button class="btn btn-sm btn-primary" id="saveConfigBtn" type="button">Simpan</button>
+      </div>
+      <div class="panel">
+        <div class="row">
+          <div class="field">
+            <label>Nama aplikasi / web</label>
+            <input id="cfgAppName" maxlength="60" placeholder="Suno Player">
+          </div>
+          <div class="field">
+            <label>Tag singkat (brand-tag)</label>
+            <input id="cfgAppTag" maxlength="20" placeholder="unofficial">
+          </div>
+        </div>
+        <div class="field">
+          <label>Eyebrow (teks kecil di atas judul)</label>
+          <input id="cfgEyebrow" maxlength="80" placeholder="Unofficial Suno player">
+        </div>
+        <div class="field">
+          <label>Judul hero (HTML diizinkan, misal <em>on repeat</em>)</label>
+          <input id="cfgHeroTitle" maxlength="120" placeholder="Your Suno playlists, <em>on repeat.</em>">
+        </div>
+        <div class="field">
+          <label>Subjudul hero</label>
+          <textarea id="cfgHeroSub" rows="3" placeholder="Pilih salah satu playlist…"></textarea>
+        </div>
+        <div class="field">
+          <label>Footer</label>
+          <input id="cfgFooter" maxlength="120" placeholder="Unofficial player. Not affiliated with Suno…">
+        </div>
+        <div class="field">
+          <label for="cfgThemeColor">Warna tema pemutar</label>
+          <input id="cfgThemeColor" type="color" value="#ff6a3d">
+        </div>
+        <div class="muted-note">Perubahan langsung diterapkan pada pemutar publik setelah disimpan.</div>
+      </div>
+
+      <div class="section-title"><h3>Cache offline</h3></div>
+      <div class="panel">
+        <div class="offline-cache-controls">
+          <label class="offline-toggle" for="offlineEnabled">
+            <input id="offlineEnabled" type="checkbox">
+            <span><strong>Izinkan simpan web dan lagu untuk offline</strong>Pengunjung dapat membuka halaman yang pernah dimuat dan menyimpan lagu satu per satu.</span>
+          </label>
+          <div class="field">
+            <label for="offlineMaxMB">Batas cache lagu per browser (MB)</label>
+            <input id="offlineMaxMB" type="number" min="16" max="2048" step="16" value="100" required>
+          </div>
+        </div>
+        <p class="muted-note">Cache disimpan terpisah di tiap browser. Saat batas tercapai, lagu tersimpan terlama akan diganti.</p>
+        <p class="offline-cache-status" id="offlineCacheStatus" role="status" aria-live="polite">Memeriksa cache di perangkat ini...</p>
+        <button class="btn btn-danger" id="clearOfflineCacheBtn" type="button">Hapus cache offline pengunjung</button>
+        <p class="muted-note">Perangkat online menghapus cache saat menerima perintah. Perangkat offline menghapusnya saat kembali online dan membuka web. Cache di perangkat ini langsung dihapus.</p>
+      </div>
+
+      <div class="section-title"><h3>PIN admin</h3></div>
+      <div class="panel">
+        <div class="pin-change-grid">
+          <form class="pin-change-form" data-pin-setting="adminPin">
+            <h4>PIN login</h4>
+            <div class="field">
+              <label for="newAdminPin">PIN login baru</label>
+              <input id="newAdminPin" name="pin" type="password" inputmode="numeric" pattern="[0-9]{4,10}" minlength="4" maxlength="10" autocomplete="new-password" required>
+            </div>
+            <button class="btn btn-glass" type="submit">Ubah PIN login</button>
+            <p class="pin-status" role="status" aria-live="polite"></p>
+          </form>
+          <form class="pin-change-form" data-pin-setting="downloadPin">
+            <h4>PIN unduh audio</h4>
+            <div class="field">
+              <label for="newDownloadPin">PIN unduh baru</label>
+              <input id="newDownloadPin" name="pin" type="password" inputmode="numeric" pattern="[0-9]{4,10}" minlength="4" maxlength="10" autocomplete="new-password" required>
+            </div>
+            <button class="btn btn-glass" type="submit">Ubah PIN unduh</button>
+            <p class="pin-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <div class="muted-note">PIN harus 4 sampai 10 digit. Nilai PIN tidak ditampilkan setelah disimpan.</div>
+      </div>
+
+      <div class="section-title">
+        <h3>Daftar playlist</h3>
+        <button class="btn btn-sm btn-primary" id="addPlaylistBtn" type="button">+ Tambah playlist</button>
+      </div>
+      <div class="panel">
+        <div id="playlistList" class="empty"><strong>Belum ada playlist.</strong>Klik "+ Tambah playlist" untuk mulai.</div>
+      </div>
+
+      <div class="section-title" id="songSectionTitle" hidden>
+        <h3 id="songSectionName">Lagu di playlist</h3>
+        <button class="btn btn-sm btn-primary" id="addSongBtn" type="button">+ Tambah lagu</button>
+      </div>
+      <div class="panel" id="songPanel" hidden>
+        <table class="playlist-table">
+          <thead><tr><th style="width:48px">#</th><th>Judul</th><th>Artis</th><th style="width:170px">Durasi</th><th style="width:220px">Aksi</th></tr></thead>
+          <tbody id="songTableBody"></tbody>
+        </table>
+      </div>
+
+      </div>
+      <section id="commentsView" hidden aria-labelledby="commentsPageTitle">
+        <div class="section-title">
+          <h3 id="commentsPageTitle">Komentar pengunjung</h3>
+        </div>
+        <div class="panel" id="adminComments" aria-live="polite">
+          <div class="empty"><strong>Memuat komentar.</strong></div>
+        </div>
+      </section>
+
+      <dialog class="notification-dialog" id="notificationDialog" aria-labelledby="notificationTitle">
+        <div class="notification-dialog-head">
+          <h2 id="notificationTitle">Notifikasi</h2>
+          <button class="btn-icon" id="closeNotifications" type="button" aria-label="Tutup notifikasi">
+            <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+        <div class="section-title">
+          <span class="muted-note">Aktivitas terbaru pengunjung</span>
+          <button class="btn btn-sm btn-glass" id="markNotificationsRead" type="button">Tandai dibaca</button>
+        </div>
+        <div class="panel" id="notificationList" aria-live="polite">
+          <div class="empty"><strong>Memuat notifikasi.</strong></div>
+        </div>
+      </dialog>
+      <div class="toast" id="toast" role="status" aria-live="polite" data-type="ok"><span id="toastMsg"></span></div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+      const API = '/api/admin';
+      const ADMIN_PATH = '/nugaduhna';
+      const els = {
+        loginView: $('#loginView'),
+        dashboardView: $('#dashboardView'),
+        homeAdminView: $('#homeAdminView'),
+        commentsView: $('#commentsView'),
+        pinInput: $('#pinInput'),
+        loginError: $('#loginError'),
+        loginBtn: $('#loginBtn'),
+        backToLogin: $('#backToLogin'),
+        adminActions: $('#adminActions'),
+        commentsLink: $('#commentsLink'),
+        dashboardLink: $('#dashboardLink'),
+        logoutBtn: $('#logoutBtn'),
+        notificationButton: $('#notificationButton'),
+        notificationDialog: $('#notificationDialog'),
+        closeNotifications: $('#closeNotifications'),
+        saveConfigBtn: $('#saveConfigBtn'),
+        offlineEnabled: $('#offlineEnabled'),
+        offlineMaxMB: $('#offlineMaxMB'),
+        offlineCacheStatus: $('#offlineCacheStatus'),
+        clearOfflineCacheBtn: $('#clearOfflineCacheBtn'),
+        cfgAppName: $('#cfgAppName'),
+        cfgAppTag: $('#cfgAppTag'),
+        cfgEyebrow: $('#cfgEyebrow'),
+        cfgHeroTitle: $('#cfgHeroTitle'),
+        cfgHeroSub: $('#cfgHeroSub'),
+        cfgFooter: $('#cfgFooter'),
+        cfgThemeColor: $('#cfgThemeColor'),
+        playlistList: $('#playlistList'),
+        addPlaylistBtn: $('#addPlaylistBtn'),
+        songSectionTitle: $('#songSectionTitle'),
+        songSectionName: $('#songSectionName'),
+        addSongBtn: $('#addSongBtn'),
+        songPanel: $('#songPanel'),
+        songTableBody: $('#songTableBody'),
+        notificationCount: $('#notificationCount'),
+        markNotificationsRead: $('#markNotificationsRead'),
+        notificationList: $('#notificationList'),
+        adminComments: $('#adminComments'),
+        toast: $('#toast'),
+        toastMsg: $('#toastMsg'),
+        adminBrandName: $('#adminBrandName'),
+      };
+
+      let state = { playlists: [], activePlaylistId: null, notifications: [], comments: [] };
+      let adminEventSource = null;
+
+      function $(sel, root = document) { return root.querySelector(sel); }
+      function $$(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
+      function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[c])); }
+      function fmtDur(sec) {
+        const total = Math.max(0, Math.round(Number(sec) || 0));
+        return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+      }
+
+      async function api(path, opts = {}) {
+        const res = await fetch(path, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json', ...opts.headers },
+          ...opts,
+        });
+        if (res.status === 401) { showLogin(); throw new Error('Unauthorized'); }
+        let data;
+        try { data = await res.json(); } catch { data = {}; }
+        if (!res.ok) throw new Error(data.error || `Gagal (${res.status})`);
+        return data;
+      }
+
+      async function offlineWorkerRequest(message) {
+        if (!window.isSecureContext || !('serviceWorker' in navigator)) {
+          throw new Error('Cache offline tidak didukung di browser ini.');
+        }
+        let registration = await navigator.serviceWorker.getRegistration('/');
+        if (!registration) registration = await navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+        registration = await navigator.serviceWorker.ready;
+        if (!registration.active) throw new Error('Service worker belum siap. Muat ulang halaman lalu coba lagi.');
+        return new Promise((resolve, reject) => {
+          const channel = new MessageChannel();
+          const timeout = setTimeout(() => {
+            channel.port1.close();
+            reject(new Error('Permintaan cache terlalu lama. Coba lagi.'));
+          }, 30000);
+          channel.port1.onmessage = (event) => {
+            clearTimeout(timeout);
+            channel.port1.close();
+            if (!event.data?.ok) reject(new Error(event.data?.error || 'Cache offline gagal diperbarui.'));
+            else resolve(event.data);
+          };
+          registration.active.postMessage(message, [channel.port2]);
+        });
+      }
+
+      function offlinePolicy(config, clearVersion = config.offlineClearVersion) {
+        return {
+          enabled: config.offlineEnabled !== false,
+          maxMB: Number(config.offlineMaxMB) || 100,
+          clearVersion: Number(clearVersion) || 0,
+        };
+      }
+
+      async function loadOfflineCacheStatus(config) {
+        els.offlineCacheStatus.textContent = 'Memeriksa cache di perangkat ini...';
+        try {
+          if (config) {
+            await offlineWorkerRequest({
+              type: 'APPLY_OFFLINE_POLICY',
+              policy: offlinePolicy(config),
+            });
+          }
+          const status = await offlineWorkerRequest({ type: 'GET_OFFLINE_STATUS' });
+          if (!status.enabled) {
+            els.offlineCacheStatus.textContent = 'Cache offline sedang dimatikan.';
+            return;
+          }
+          if (!status.tracks.length) {
+            els.offlineCacheStatus.textContent = 'Belum ada lagu yang tersimpan di cache perangkat ini.';
+            return;
+          }
+          const sizeMB = (status.usedBytes / (1024 * 1024)).toFixed(1);
+          els.offlineCacheStatus.textContent = `${status.tracks.length} lagu tersimpan di perangkat ini, ${sizeMB} MB dari batas ${status.maxMB} MB.`;
+        } catch (error) {
+          els.offlineCacheStatus.textContent = `Cache gagal dimuat. ${error.message}`;
+        }
+      }
+
+      function toast(msg, type = 'ok') {
+        els.toastMsg.textContent = msg;
+        els.toast.dataset.type = type;
+        els.toast.classList.add('show');
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => els.toast.classList.remove('show'), 3000);
+      }
+
+      function showLogin() {
+        if (adminEventSource) {
+          adminEventSource.close();
+          adminEventSource = null;
+        }
+        if (els.notificationDialog.open) els.notificationDialog.close();
+        els.adminActions.hidden = true;
+        els.loginView.hidden = false;
+        els.dashboardView.hidden = true;
+        els.pinInput.focus();
+      }
+      function showDashboard() {
+        els.loginView.hidden = true;
+        els.dashboardView.hidden = false;
+        els.adminActions.hidden = false;
+        const commentsPage = location.pathname === `${ADMIN_PATH}/comments`;
+        els.homeAdminView.hidden = commentsPage;
+        els.commentsView.hidden = !commentsPage;
+        els.commentsLink.hidden = commentsPage;
+        els.dashboardLink.hidden = !commentsPage;
+        connectAdminEvents();
+      }
+
+      async function checkAuth() {
+        try {
+          await api(`${API}/config`);
+          if (location.pathname === `${ADMIN_PATH}/login`) {
+            const next = new URLSearchParams(location.search).get('next');
+            location.replace(next === 'comments' ? `${ADMIN_PATH}/comments` : ADMIN_PATH);
+            return;
+          }
+          showDashboard();
+          await loadAll();
+        } catch {
+          showLogin();
+        }
+      }
+
+      els.loginBtn.addEventListener('click', async () => {
+        const pin = els.pinInput.value.trim();
+        if (!pin) { els.pinInput.classList.add('error'); els.loginError.textContent = 'Masukkan PIN.'; return; }
+        els.pinInput.classList.remove('error');
+        try {
+          await api(`${ADMIN_PATH}/login`, { method: 'POST', body: JSON.stringify({ pin }) });
+          const next = new URLSearchParams(location.search).get('next');
+          const destination = next === 'comments' || location.pathname === `${ADMIN_PATH}/comments`
+            ? `${ADMIN_PATH}/comments`
+            : ADMIN_PATH;
+          location.replace(destination);
+        } catch (e) {
+          els.loginError.textContent = e.message || 'Gagal masuk.';
+          els.pinInput.classList.add('error');
+        }
+      });
+
+      const togglePinBtn = $('#togglePin');
+      if (togglePinBtn) {
+        let showing = false;
+        togglePinBtn.addEventListener('click', () => {
+          showing = !showing;
+          els.pinInput.type = showing ? 'text' : 'password';
+          togglePinBtn.setAttribute('aria-pressed', String(showing));
+        });
+      }
+      els.pinInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') els.loginBtn.click(); });
+      els.logoutBtn.addEventListener('click', async () => {
+        els.logoutBtn.disabled = true;
+        try {
+          await api(`${ADMIN_PATH}/logout`, { method: 'POST' });
+          location.assign('/');
+        } catch (error) {
+          toast(error.message || 'Gagal keluar dari admin.', 'error');
+        } finally {
+          els.logoutBtn.disabled = false;
+        }
+      });
+      els.notificationButton.addEventListener('click', () => {
+        els.notificationDialog.showModal();
+        els.notificationButton.setAttribute('aria-expanded', 'true');
+        els.closeNotifications.focus();
+      });
+      els.closeNotifications.addEventListener('click', () => els.notificationDialog.close());
+      els.notificationDialog.addEventListener('close', () => {
+        els.notificationButton.setAttribute('aria-expanded', 'false');
+        els.notificationButton.focus();
+      });
+      els.notificationDialog.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault();
+        els.notificationDialog.close();
+      });
+      els.backToLogin.addEventListener('click', () => {
+        state.activePlaylistId = null;
+        els.songSectionTitle.hidden = true;
+        els.songPanel.hidden = true;
+        els.backToLogin.hidden = true;
+      });
+
+      async function loadAll() {
+        const [config, playlists] = await Promise.all([
+          api(`${API}/config`),
+          api(`${API}/playlists`),
+        ]);
+        applyConfig(config);
+        state.playlists = Array.isArray(playlists) ? playlists : [];
+        renderPlaylists();
+        await Promise.all([
+          loadAdminNotifications(),
+          loadAdminComments(),
+          loadOfflineCacheStatus(config),
+        ]);
+      }
+
+      async function loadAdminNotifications() {
+        try {
+          const notifications = await api(`${API}/notifications`);
+          state.notifications = Array.isArray(notifications) ? notifications : [];
+          renderAdminNotifications();
+        } catch (error) {
+          els.notificationList.textContent = `Notifikasi gagal dimuat. ${error.message}`;
+        }
+      }
+
+      async function loadAdminComments() {
+        try {
+          const comments = await api(`${API}/comments`);
+          state.comments = Array.isArray(comments) ? comments : [];
+          renderAdminComments();
+        } catch (error) {
+          els.adminComments.textContent = `Komentar gagal dimuat. ${error.message}`;
+        }
+      }
+
+      function connectAdminEvents() {
+        if (adminEventSource || typeof EventSource !== 'function') return;
+        adminEventSource = new EventSource(`${API}/events`);
+        adminEventSource.addEventListener('admin-notification', () => {
+          loadAdminNotifications();
+          loadAdminComments();
+        });
+      }
+
+      function renderAdminNotifications() {
+        const unread = state.notifications.filter((notification) => !notification.readAt).length;
+        els.notificationCount.hidden = unread === 0;
+        els.notificationCount.textContent = unread > 99 ? '99+' : String(unread);
+        els.notificationButton.setAttribute('aria-label', unread ? `Notifikasi, ${unread} belum dibaca` : 'Notifikasi');
+        if (!state.notifications.length) {
+          els.notificationList.innerHTML = '<div class="empty"><strong>Belum ada notifikasi.</strong>Notifikasi like lagu dan komentar baru akan muncul di sini.</div>';
+          return;
+        }
+        els.notificationList.innerHTML = `<div class="activity-list">${state.notifications.map((notification) => {
+          const title = notification.type === 'comment' ? 'Komentar baru' : 'Like lagu baru';
+          const date = notification.createdAt ? new Date(notification.createdAt).toLocaleString('id-ID') : '';
+          return `<article class="activity-item" data-unread="${!notification.readAt}">
+            <h4 class="activity-title">${title}: ${esc(notification.trackTitle || 'Lagu')}</h4>
+            <p class="activity-meta">${esc(date)}</p>
+            <p class="activity-summary">${esc(notification.summary || '')}</p>
+          </article>`;
+        }).join('')}</div>`;
+      }
+
+      function renderAdminComments() {
+        if (!state.comments.length) {
+          els.adminComments.innerHTML = '<div class="empty"><strong>Belum ada komentar.</strong>Komentar pengunjung akan muncul di sini.</div>';
+          return;
+        }
+        els.adminComments.innerHTML = `<div class="activity-list">${state.comments.map((comment) => {
+          const date = comment.createdAt ? new Date(comment.createdAt).toLocaleString('id-ID') : '';
+          const replies = Array.isArray(comment.replies) ? comment.replies : [];
+          return `<article class="admin-comment">
+            <h4 class="admin-comment-title">${esc(comment.trackTitle || 'Lagu')}</h4>
+            <p class="admin-comment-meta">${esc(comment.name || 'Pengunjung')} · ${esc(date)}</p>
+            <p class="admin-comment-text">${esc(comment.text || '')}</p>
+            ${replies.length ? `<div class="admin-comment-replies">${replies.map((reply) => `
+              <div class="admin-comment-reply">
+                <strong>${esc(reply.name || 'Admin')}</strong>
+                <p>${esc(reply.text || '')}</p>
+              </div>`).join('')}</div>` : ''}
+            <div class="admin-comment-tools">
+              <button class="btn btn-glass" type="button" data-action="like-comment" data-id="${esc(comment.id)}" aria-pressed="${Boolean(comment.adminLiked)}">${comment.adminLiked ? 'Batal suka' : 'Sukai komentar'}</button>
+              <button class="btn btn-danger btn-sm admin-comment-delete" type="button" data-action="delete-comment" data-id="${esc(comment.id)}" aria-label="Hapus komentar dari ${esc(comment.name || 'Pengunjung')} untuk ${esc(comment.trackTitle || 'lagu')}">Hapus</button>
+            </div>
+            <form class="reply-form" data-comment-reply="${esc(comment.id)}">
+              <label for="reply-${esc(comment.id)}">Balas sebagai Admin</label>
+              <textarea id="reply-${esc(comment.id)}" name="text" maxlength="1000" required></textarea>
+              <button class="btn btn-primary" type="submit">Kirim balasan</button>
+              <p class="reply-status" role="status" aria-live="polite"></p>
+            </form>
+          </article>`;
+        }).join('')}</div>`;
+      }
+
+      async function toggleAdminCommentLike(commentId, button) {
+        button.disabled = true;
+        try {
+          await api(`${API}/comments/${encodeURIComponent(commentId)}/like`, {
+            method: 'POST',
+            body: JSON.stringify({}),
+          });
+          await loadAdminComments();
+        } catch (error) {
+          toast(error.message, 'error');
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      async function deleteAdminComment(commentId, button) {
+        if (!confirm('Hapus komentar ini? Tindakan ini tidak dapat dibatalkan.')) return;
+        button.disabled = true;
+        try {
+          await api(`${API}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' });
+          await loadAdminComments();
+          toast('Komentar dihapus.');
+        } catch (error) {
+          toast(error.message || 'Komentar gagal dihapus.', 'error');
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      async function submitAdminReply(form) {
+        const commentId = form.dataset.commentReply;
+        const input = $('textarea[name="text"]', form);
+        const status = $('.reply-status', form);
+        const submit = $('button[type="submit"]', form);
+        submit.disabled = true;
+        status.textContent = '';
+        try {
+          await api(`${API}/comments/${encodeURIComponent(commentId)}/reply`, {
+            method: 'POST',
+            body: JSON.stringify({ text: input.value }),
+          });
+          await loadAdminComments();
+          toast('Balasan dikirim.');
+        } catch (error) {
+          status.dataset.type = 'error';
+          status.textContent = error.message || 'Balasan gagal dikirim.';
+        } finally {
+          submit.disabled = false;
+        }
+      }
+
+      async function changeAdminPin(form) {
+        const setting = form.dataset.pinSetting;
+        const input = $('input[name="pin"]', form);
+        const status = $('.pin-status', form);
+        const submit = $('button[type="submit"]', form);
+        const pin = input.value.trim();
+        status.textContent = '';
+        status.dataset.type = '';
+        if (!/^[0-9]{4,10}$/.test(pin)) {
+          status.dataset.type = 'error';
+          status.textContent = 'PIN harus terdiri dari 4 sampai 10 digit.';
+          return;
+        }
+
+        submit.disabled = true;
+        try {
+          await api(`${API}/pins`, {
+            method: 'POST',
+            body: JSON.stringify({ [setting]: pin }),
+          });
+          input.value = '';
+          status.textContent = 'PIN berhasil diubah.';
+          toast('PIN berhasil diubah.');
+        } catch (error) {
+          status.dataset.type = 'error';
+          status.textContent = error.message || 'PIN gagal diubah.';
+        } finally {
+          submit.disabled = false;
+        }
+      }
+
+      els.markNotificationsRead.addEventListener('click', async () => {
+        try {
+          await api(`${API}/notifications/read`, { method: 'POST', body: JSON.stringify({}) });
+          await loadAdminNotifications();
+        } catch (error) {
+          toast(error.message, 'error');
+        }
+      });
+
+      els.adminComments.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-action="like-comment"]');
+        if (button) {
+          toggleAdminCommentLike(button.dataset.id, button);
+          return;
+        }
+        const deleteButton = event.target.closest('[data-action="delete-comment"]');
+        if (deleteButton) deleteAdminComment(deleteButton.dataset.id, deleteButton);
+      });
+      els.adminComments.addEventListener('submit', (event) => {
+        const form = event.target.closest('[data-comment-reply]');
+        if (!form) return;
+        event.preventDefault();
+        submitAdminReply(form);
+      });
+      $$('.pin-change-form').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          changeAdminPin(form);
+        });
+      });
+
+      function applyConfig(c) {
+        els.cfgAppName.value = c.appName || '';
+        els.cfgAppTag.value = c.appTag || '';
+        els.cfgEyebrow.value = c.eyebrow || '';
+        els.cfgHeroTitle.value = c.heroTitle || '';
+        els.cfgHeroSub.value = c.heroSub || '';
+        els.cfgFooter.value = c.footer || '';
+        els.cfgThemeColor.value = /^#[0-9a-f]{6}$/i.test(c.themeColor || '') ? c.themeColor : '#ff6a3d';
+        els.offlineEnabled.checked = c.offlineEnabled !== false;
+        els.offlineMaxMB.value = String(Number(c.offlineMaxMB) || 100);
+        els.adminBrandName.textContent = c.appName || 'Suno';
+        const pageName = location.pathname === `${ADMIN_PATH}/comments` ? 'Komentar' : 'Admin';
+        document.title = `${pageName} · ${c.appName || 'Suno Player'}`;
+      }
+
+      els.saveConfigBtn.addEventListener('click', async () => {
+        const config = {
+          appName: els.cfgAppName.value.trim(),
+          appTag: els.cfgAppTag.value.trim(),
+          eyebrow: els.cfgEyebrow.value.trim(),
+          heroTitle: els.cfgHeroTitle.value.trim(),
+          heroSub: els.cfgHeroSub.value.trim(),
+          footer: els.cfgFooter.value.trim(),
+          themeColor: els.cfgThemeColor.value,
+          offlineEnabled: els.offlineEnabled.checked,
+          offlineMaxMB: Number(els.offlineMaxMB.value),
+        };
+        try {
+          const saved = await api(`${API}/config`, { method: 'POST', body: JSON.stringify(config) });
+          await loadOfflineCacheStatus(saved);
+          toast('Pengaturan disimpan.');
+        } catch (e) { toast(e.message, 'error'); }
+      });
+
+      els.clearOfflineCacheBtn.addEventListener('click', async () => {
+        if (!confirm('Hapus cache offline pengunjung? Perangkat lain akan menghapus cache saat kembali online.')) return;
+        els.clearOfflineCacheBtn.disabled = true;
+        try {
+          const config = await api(`${API}/config`);
+          const result = await api(`${API}/offline-cache/clear`, {
+            method: 'POST',
+            body: JSON.stringify({}),
+          });
+          await offlineWorkerRequest({
+            type: 'APPLY_OFFLINE_POLICY',
+            policy: offlinePolicy(config, result.offlineClearVersion),
+          });
+          await loadOfflineCacheStatus();
+          toast('Cache perangkat ini dihapus. Perangkat lain akan menghapus saat online.');
+        } catch (error) {
+          toast(error.message || 'Cache offline gagal dihapus.', 'error');
+          await loadOfflineCacheStatus();
+        } finally {
+          els.clearOfflineCacheBtn.disabled = false;
+        }
+      });
+
+      function renderPlaylists() {
+        const list = els.playlistList;
+        list.innerHTML = '';
+        if (!state.playlists.length) {
+          list.innerHTML = '<div class="empty"><strong>Belum ada playlist.</strong>Klik "+ Tambah playlist" untuk mulai.</div>';
+          return;
+        }
+        const table = document.createElement('table');
+        table.className = 'playlist-table';
+        table.innerHTML = '<thead><tr><th style="width:44px"></th><th>Nama</th><th>Lagu</th><th style="width:170px">Dibuat</th><th style="width:220px">Aksi</th></tr></thead><tbody></tbody>';
+        const tbody = table.querySelector('tbody');
+        state.playlists.forEach((p) => {
+          const tr = document.createElement('tr');
+          const date = p.createdAt ? new Date(p.createdAt).toLocaleDateString('id-ID') : '';
+          tr.innerHTML = `
+            <td><strong>${esc(p.name ? p.name[0] : '?')}</strong></td>
+            <td><strong>${esc(p.name || 'Untitled playlist')}</strong><div class="muted-note">${esc(p.description || '')}</div></td>
+            <td>${p.tracks ? p.tracks.length : 0} lagu</td>
+            <td>${date}</td>
+            <td class="track-actions">
+              <button class="btn-icon" data-action="open" data-id="${esc(p.id)}" title="Kelola lagu"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6M12 18v6M4.22 4.22l1.76 1.76M18.78 18.78l1.76 1.76M1 12h6M18 12h6M4.22 19.78l1.76-1.76M18.78 4.22l1.76-1.76"></path></svg></button>
+              <button class="btn-icon" data-action="edit" data-id="${esc(p.id)}" title="Edit playlist"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg></button>
+              <button class="btn-icon btn-danger" data-action="delete" data-id="${esc(p.id)}" title="Hapus playlist"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+        list.appendChild(table);
+      }
+
+      async function addPlaylist() {
+        const name = prompt('Nama playlist:');
+        if (!name) return;
+        const description = prompt('Deskripsi singkat (opsional):') || '';
+        try {
+          const entry = await api(`${API}/playlists`, { method: 'POST', body: JSON.stringify({ name, description }) });
+          state.playlists.unshift(entry);
+          renderPlaylists();
+          toast('Playlist ditambahkan.');
+        } catch (e) { toast(e.message, 'error'); }
+      }
+
+      async function editPlaylist(id) {
+        const p = state.playlists.find((x) => x.id === id);
+        if (!p) return;
+        const name = prompt('Nama playlist:', p.name || '');
+        if (name === null) return;
+        const description = prompt('Deskripsi singkat:', p.description || '');
+        if (description === null) return;
+        try {
+          const updated = await api(`${API}/playlists/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ name, description }),
+          });
+          state.playlists = state.playlists.map((x) => (x.id === id ? { ...x, ...updated } : x));
+          renderPlaylists();
+          toast('Playlist diperbarui.');
+        } catch (e) { toast(e.message, 'error'); }
+      }
+
+      async function deletePlaylist(id) {
+        if (!confirm('Hapus playlist ini?')) return;
+        try {
+          await api(`${API}/playlists/${id}`, { method: 'DELETE' });
+          state.playlists = state.playlists.filter((p) => p.id !== id);
+          if (state.activePlaylistId === id) state.activePlaylistId = null;
+          renderPlaylists();
+          renderSongs();
+          toast('Playlist dihapus.');
+        } catch (e) { toast(e.message, 'error'); }
+      }
+
+      function openPlaylist(id) {
+        const p = state.playlists.find((x) => x.id === id);
+        if (!p) return;
+        state.activePlaylistId = id;
+        els.songSectionName.textContent = p.name || 'Playlist';
+        els.songSectionTitle.hidden = false;
+        els.songPanel.hidden = false;
+        els.backToLogin.hidden = false;
+        renderSongs();
+      }
+
+      function renderSongs() {
+        const tbody = els.songTableBody;
+        tbody.innerHTML = '';
+        const p = state.playlists.find((x) => x.id === state.activePlaylistId);
+        const tracks = p && Array.isArray(p.tracks) ? p.tracks : [];
+        if (!tracks.length) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--faint)">Belum ada lagu. Klik "+ Tambah lagu".</td></tr>';
+          return;
+        }
+        tracks.forEach((t, i) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${String(i + 1).padStart(2, '0')}</td>
+            <td>${esc(t.title || 'Untitled')}</td>
+            <td>${esc(t.artist || '-')}</td>
+            <td>${t.duration ? fmtDur(t.duration) : '-'}</td>
+            <td class="track-actions">
+              <button class="btn-icon btn-danger" data-action="removesong" data-trackid="${esc(t.id)}" title="Hapus lagu"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function removeSong(trackId) {
+        if (!confirm('Hapus lagu ini dari playlist?')) return;
+        try {
+          await api(`${API}/playlists/${state.activePlaylistId}/tracks/${trackId}`, { method: 'DELETE' });
+          const p = state.playlists.find((x) => x.id === state.activePlaylistId);
+          p.tracks = (p.tracks || []).filter((t) => t.id !== trackId);
+          renderSongs();
+          toast('Lagu dihapus.');
+        } catch (e) { toast(e.message, 'error'); }
+      }
+
+      els.addPlaylistBtn.addEventListener('click', addPlaylist);
+
+      // Delegasi sekali saja — render ulang tabel tidak menumpuk listener.
+      els.playlistList.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        if (btn.dataset.action === 'open') openPlaylist(id);
+        if (btn.dataset.action === 'edit') editPlaylist(id);
+        if (btn.dataset.action === 'delete') deletePlaylist(id);
+      });
+      els.songTableBody.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="removesong"]');
+        if (btn) removeSong(btn.dataset.trackid);
+      });
+      els.addSongBtn.addEventListener('click', async () => {
+        const suno = prompt('URL lagu Suno (https://suno.com/song/…) atau ID lagu:\nKosongkan untuk mengisi manual.');
+        if (suno === null) return;
+        let payload = suno.trim() ? { suno: suno.trim() } : null;
+        if (!payload) {
+          const title = prompt('Judul lagu:');
+          if (!title) return;
+          payload = {};
+          payload.title = title;
+          payload.artist = prompt('Artis (opsional):') || '';
+          payload.audio = prompt('URL audio langsung (opsional):') || '';
+          payload.image = prompt('URL gambar sampul (opsional):') || '';
+        }
+        try {
+          await api(`${API}/playlists/${state.activePlaylistId}/tracks`, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+          await loadAll();
+          openPlaylist(state.activePlaylistId);
+          toast('Lagu ditambahkan.');
+        } catch (e) { toast(e.message, 'error'); }
+      });
+
+      checkAuth();
+    })();
+  </script>
+</body>
+</html>

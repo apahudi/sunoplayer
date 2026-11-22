@@ -1,0 +1,12 @@
+{
+  "appName": "Suno Playlist Player",
+  "appTag": "tidak resmi",
+  "eyebrow": "Pemutar playlist Suno",
+  "heroTitle": "Playlist Suno Anda,<em>siap diputar.</em>",
+  "heroSub": "Tambahkan playlist dari panel admin untuk mulai mendengarkan.",
+  "footer": "Pemutar tidak resmi. Tidak berafiliasi dengan Suno.",
+  "themeColor": "#ff6a3d",
+  "offlineEnabled": true,
+  "offlineMaxMB": 100,
+  "offlineClearVersion": 0
+}
