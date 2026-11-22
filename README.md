@@ -96,18 +96,6 @@ Cache audio offline tersimpan di browser masing-masing pengunjung. `web-push-key
 
 Simpan cadangan file data dan kunci Web Push di tempat privat. Jika kunci Web Push hilang atau diganti, pengunjung mungkin perlu mengaktifkan notifikasi lagi.
 
-## Menyiapkan repositori GitHub
-
-`.gitignore` mengecualikan data runtime, file environment, kunci, langganan push, log, dan `node_modules`. Sebelum commit, periksa daftar file:
-
-```bash
-git status --short
-```
-
-Jangan paksa menambahkan file runtime yang diabaikan jika berisi playlist, komentar, langganan, token, atau PIN. Folder ini tidak menyertakan playlist, komentar, kunci push, langganan browser, cadangan, QR donasi, atau file APK dari instalasi asal.
-
-Metadata `package.json` mencantumkan lisensi MIT. Salinan ini belum menyertakan file `LICENSE`; pastikan pemegang hak dan berkas lisensi sudah benar sebelum merilis repositori.
-
 ## Pemecahan masalah
 
 - **Port sudah dipakai:** jalankan dengan `PORT=4173 npm start`.
