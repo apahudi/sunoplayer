@@ -1,5 +1,8 @@
 # Suno Playlist Player
 
+<img src="https://github.com/apahudi/sunoplayer/blob/main/Screenshot%20from%202026-11-22%2010-20-24.png?raw=true" />
+
+
 Suno Playlist Player adalah aplikasi web Node.js untuk memutar playlist publik Suno. Admin mengelola daftar playlist dan pengaturan aplikasi lewat panel admin. Aplikasi ini tidak berafiliasi dengan Suno.
 
 ## Fitur
@@ -39,13 +42,19 @@ Server membaca `PORT` dan `HOST` dari environment. Default port adalah `3000`, d
 
 ## Panel admin dan PIN
 
+<img src="https://github.com/apahudi/sunoplayer/blob/main/Screenshot%20from%202026-11-22%2010-20-41.png?raw=true" />
+
 Buka `/nugaduhna` pada origin aplikasi yang sama. Pada pemasangan baru, PIN login admin dan PIN unduhan audio sama-sama `123456`.
+
+<img src="https://github.com/apahudi/sunoplayer/blob/main/Screenshot%20from%202026-11-22%2010-21-03.png?raw=true" />
 
 Segera ubah kedua PIN dari panel admin sebelum membuka aplikasi ke jaringan publik. Panel menyediakan pengaturan terpisah untuk PIN login dan PIN unduhan. Masing-masing harus terdiri dari 4 sampai 10 digit. Nilai PIN yang disimpan panel admin berbentuk hash di `admin-pins.json`.
 
 Environment `ADMIN_PIN` dan `DOWNLOAD_PIN` dapat menentukan PIN awal saat server mulai. Setelah PIN diubah dari panel, nilai dalam `admin-pins.json` akan digunakan lebih dahulu. Karena PIN awal `123456` tercantum di kode, jangan biarkan PIN itu aktif pada deployment publik.
 
 ## Membuat playlist
+
+<img src="https://github.com/apahudi/sunoplayer/blob/main/Screenshot%20from%202026-11-22%2010-21-20.png?raw=true" />
 
 Playlist kosong disediakan melalui `playlists.json`. Masuk ke panel admin untuk membuat playlist dan menambahkan lagu menggunakan tautan lagu Suno. Setelah ditambahkan, playlist akan muncul di halaman utama.
 
