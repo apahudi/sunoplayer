@@ -2,7 +2,6 @@
 
 <img src="https://github.com/apahudi/sunoplayer/blob/main/Screenshot%20from%202026-11-22%2010-20-24.png?raw=true" />
 
-
 Suno Playlist Player adalah aplikasi web Node.js untuk memutar playlist publik Suno. Admin mengelola daftar playlist dan pengaturan aplikasi lewat panel admin. Aplikasi ini tidak berafiliasi dengan Suno.
 
 ## Fitur
@@ -25,7 +24,7 @@ Folder ini memulai aplikasi dengan playlist kosong. Tidak ada tombol donasi.
 
 ## Pemasangan dan menjalankan
 
-Di terminal, buka folder `universal`, lalu jalankan:
+Download ZIP lalu extract, di dalam folder hasil extract tadi buka terminal, lalu jalankan:
 
 ```bash
 npm ci
